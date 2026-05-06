@@ -1669,6 +1669,43 @@ Where `background` is calculated as
 .Fog in example scenario https://github.com/esmini/esmini/blob/dev/resources/xosc/cut-in_environment.xosc[cut-in_environment.xosc]
 image::fog.jpg[]
 
+=== Vehicle light states
+
+Since v3.1.0, esmini supports https://publications.pages.asam.net/standards/ASAM_OpenSCENARIO/ASAM_OpenSCENARIO_XML/latest/generated/content/LightStateAction.html[LightStateAction] for controlling vehicle lighting. While all standard https://publications.pages.asam.net/standards/ASAM_OpenSCENARIO/ASAM_OpenSCENARIO_XML/latest/generated/content/VehicleLightType.html[VehicleLightType] entries are supported, https://publications.pages.asam.net/standards/ASAM_OpenSCENARIO/ASAM_OpenSCENARIO_XML/latest/generated/content/UserDefinedLight.html[UserDefinedLight] is currently excluded.
+
+.Example: Activating brake lights
+
+```xml
+<AppearanceAction>
+    <LightStateAction transitionTime="0">
+        <LightType>
+            <VehicleLight vehicleLightType="brakeLights" />
+        </LightType>
+        <LightState mode="on" luminousIntensity="6000" />
+    </LightStateAction>
+</AppearanceAction>
+```
+
+For scenario preview purposes esmini offers a simplified visualization of the light states. The light colors are deduced from the 3D model or falls back to internal defaults. For custom colors, esmini generates a dark base shade and a bright shade for full intensity; note that the visualized color may look different than anticipated due to this shade generation.
+
+Most vehicle models have been updated with simple polygon faces representing each possible light source. Note that only the light faces themselves are illuminated, no light are casted on the surrounding environment.
+
+By default no light faces are shown, only if the
+
+==== OSI Mapping
+
+esmini maps LightStateAction → OSI https://opensimulationinterface.github.io/osi-antora-generator/asamosi/V3.5.0/gen/structosi3_1_1MovingObject_1_1VehicleClassification_1_1LightState.html[LightState], with some special assumptions made on the following combinations:
+
+    * lowBeam, daytimeRunningLights → head_light
+    * brakeLights intensity > 6000 → brake_light_state::BRAKE_LIGHT_STATE_STRONG
+    * specialPurposeLights flashing, Role: Ambulance/Police → emergency_vehicle_illumination::FLASHING_BLUE
+    * specialPurposeLights flashing, Role: Fire → emergency_vehicle_illumination::FLASHING_BLUE_AND_RED
+    * specialPurposeLights flashing, Other roles → service_vehicle_illumination::FLASHING_AMBER
+
+==== Visualization
+
+esmini supports limited previeweing of light state actions. Most vehicle models
+
 === Tunnels
 
 From v2.49.0, esmini supports OpenDRIVE tunnels.
