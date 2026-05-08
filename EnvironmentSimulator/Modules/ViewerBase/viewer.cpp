@@ -3858,6 +3858,68 @@ PointSensor* Viewer::CreateSensor(const float (&color)[3], bool create_ball, boo
     return sensor;
 }
 
+void Viewer::SetLightMaterialAndColor(Object::VehicleLightStatus* light, CarModel* model)
+{
+    // Copy the light type and then use the base type to find material later
+    Object::VehicleLightType light_type = light->type;
+
+    if (light_type == Object::VehicleLightType::FOG_LIGHTS)
+    {
+        light_type = Object::VehicleLightType::FOG_LIGHTS_REAR;  // Use rear fog light as the base
+    }
+    else if (light_type == Object::VehicleLightType::WARNING_LIGHTS)
+    {
+        light_type = Object::VehicleLightType::INDICATOR_LEFT;  // Use left indicator as the base
+    }
+
+    light->mode  = Object::VehicleLightMode::UNKNOWN;
+    light->color = Object::VehicleLightColor::UNKNOWN;
+
+    for (const auto& material : model->light_material_)
+    {
+        if (material == nullptr || light->LightType2Str(light_type) != material->getName())
+        {
+            continue;
+        }
+
+        // Get diffuse and emission colors
+        const osg::Vec4& diffuseColor = material->getDiffuseFrontAndBack() ? material->getDiffuse(osg::Material::FRONT_AND_BACK)
+                                                                            : material->getDiffuse(osg::Material::FRONT);
+
+        const osg::Vec4& emissionColor = material->getEmissionFrontAndBack() ? material->getEmission(osg::Material::FRONT_AND_BACK)
+                                                                                : material->getEmission(osg::Material::FRONT);
+
+        // Update light status with material colors
+        light->rgb[0] = diffuseColor.r();
+        light->rgb[1] = diffuseColor.g();
+        light->rgb[2] = diffuseColor.b();
+
+        // Save the material color
+        light->baseRgb[0] = diffuseColor.r();
+        light->baseRgb[1] = diffuseColor.g();
+        light->baseRgb[2] = diffuseColor.b();
+
+        light->emission[0] = emissionColor.r();
+        light->emission[1] = emissionColor.g();
+        light->emission[2] = emissionColor.b();
+
+        GetRgbMinMaxColor(light->baseRgb, light->rgb, light->maxRgb);
+        LOG_DEBUG("Init LightState: Setting light {} with rgb {}, {}, {} to min rgb {}, {}, {} and max rgb {}, {}, {}",
+                    light->LightType2Str(light->type),
+                    light->baseRgb[0],
+                    light->baseRgb[1],
+                    light->baseRgb[2],
+                    light->rgb[0],
+                    light->rgb[1],
+                    light->rgb[2],
+                    light->maxRgb[0],
+                    light->maxRgb[1],
+                    light->maxRgb[2]);
+
+        break;
+    }
+}
+
 void Viewer::UpdateRoadSensors(PointSensor* road_sensor, PointSensor* route_sensor, PointSensor* lane_sensor, roadmanager::Position* pos)
 {
     if (road_sensor == 0 || route_sensor == 0 || lane_sensor == 0)

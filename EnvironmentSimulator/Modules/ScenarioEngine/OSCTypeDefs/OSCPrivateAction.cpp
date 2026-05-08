@@ -3351,7 +3351,6 @@ void LightStateAction::InitializeLights()
         light.emission[1] = 0.0;
         light.emission[2] = 0.0;
         SetRgbFromTypeEnum(light.type, light.baseRgb);
-        GetRgbMinMaxColor(light.baseRgb, light.rgb, light.maxRgb);
     }
 }
 
@@ -3452,10 +3451,14 @@ void LightStateAction::SetRgbFromTypeEnum(const Object::VehicleLightType& type, 
             break;
         case Object::VehicleLightType::FOG_LIGHTS:
         case Object::VehicleLightType::FOG_LIGHTS_FRONT:
-        case Object::VehicleLightType::FOG_LIGHTS_REAR:
             arr[0] = 0.8;
             arr[1] = 0.8;
             arr[2] = 0.8;
+            break;
+        case Object::VehicleLightType::FOG_LIGHTS_REAR:
+            arr[0] = 0.6;
+            arr[1] = 0.0;
+            arr[2] = 0.0;
             break;
         case Object::VehicleLightType::BRAKE_LIGHTS:
             arr[0] = 0.5;
