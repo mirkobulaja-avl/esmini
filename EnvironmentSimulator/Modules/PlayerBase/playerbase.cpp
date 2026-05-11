@@ -1367,7 +1367,7 @@ void ScenarioPlayer::InitVehicleModel(Object* obj, viewer::CarModel* model)
                 continue;
             }
             // Set the type of the light, as its been UNDEFINED until now
-            light->type  = static_cast<Object::VehicleLightType>(i);
+            light->type = static_cast<Object::VehicleLightType>(i);
             viewer_->SetLightMaterialAndColor(light, model);
         }
     }

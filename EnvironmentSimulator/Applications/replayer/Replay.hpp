@@ -485,8 +485,8 @@ namespace scenarioengine
         bool                     repeat_     = false;
         std::string              create_datfile_;
         std::vector<id_t>        skipped_pids_;
-        bool                     eos_received_       = false;  // end of scenario packet
-        bool                     has_lightstates_    = false;
+        bool                     eos_received_        = false;  // end of scenario packet
+        bool                     has_lightstates_     = false;
         std::vector<uint8_t>     lightstate_entities_ = {};
 
         /* PacketHandler stuff */
