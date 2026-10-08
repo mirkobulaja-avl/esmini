@@ -2153,9 +2153,9 @@ namespace roadmanager
         }
 
     private:
-        size_t            nr_lamps_;
+        size_t            nr_lamps_ = 0;
         std::vector<Lamp> lamps_;
-        TrafficLightType  light_type_;
+        TrafficLightType  light_type_ = TrafficLightType::TYPE_UNDEFINED;
 
         // State (from OpenSCENARIO)
         std::string                               state_;
